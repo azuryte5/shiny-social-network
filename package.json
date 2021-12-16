@@ -1,0 +1,26 @@
+{
+  "name": "shiny-social-network",
+  "version": "1.0.0",
+  "description": "NoSQL Challenge: Social Network API",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azuryte5/shiny-social-network.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/azuryte5/shiny-social-network/issues"
+  },
+  "homepage": "https://github.com/azuryte5/shiny-social-network#readme"
+}

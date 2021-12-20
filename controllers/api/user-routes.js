@@ -4,6 +4,10 @@ const router = require('express').Router();
 
 router.get('/', (req,res) =>{
     User.find({})
+    .populate({
+        path: 'thoughts',
+        select: '-__v'
+     })
     .then(dbUser => res.json(dbUser))
     .catch(err => res.json(err));
 })
@@ -11,6 +15,10 @@ router.get('/', (req,res) =>{
 //Still have to populate that users thought and friend data
 router.get('/:id', (req,res) =>{
     User.findOne({_id: req.params.id})
+    .populate({
+        path: 'thoughts',
+        select: '-__v'
+     })
     .then(dbUserData => {
     if (!dbUserData) { res.status(404).json({message: "No user found by this Id"})
     return;
@@ -52,6 +60,35 @@ router.delete('/:id', (req, res) => {
 
 // userid/friends/friendID
     // Post/create a new friend to a user friend list
-    // Delete remove a friend from a user friends list
+router.post('/:id/friends/:friendId', (req, res) => {
+    User.findOneAndUpdate(
+        {_id: req.params.id},
+        { $push: { friends: req.params.friendId } },
+        { new: true, runValidators: true}
+    )
+    .then(dbUserData => {
+        if (!dbUserData) {
+            res.status(404).json({ message: 'No user found with this ID!' });
+            return;
+        }
+        res.json(dbUserData);
+    })
+    .catch(err => res.json(err));
+}
+    )
 
-    module.exports=router;
+
+    // Delete remove a friend from a user friends list
+router.delete('/:id/friends/:friendId', (req, res) => {
+    User.findOneAndUpdate(
+        { _id: req.params.id },
+        { $pull: { friends: req.params.friendId }},
+        { new: true}
+    )
+    .then(dbUserData => res.json(dbUserData))
+    .catch(err => res.json(err));
+}
+    )
+
+
+module.exports=router;

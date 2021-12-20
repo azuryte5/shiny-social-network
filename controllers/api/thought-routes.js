@@ -3,14 +3,20 @@ const router = require('express').Router();
 //get all thoughts
 router.get('/', (req,res) =>{
     Thought.find({})
-    .select('-__v')
+    .populate({
+        path: 'user',
+        select: '-__v'
+    })
     .then(dbThoughtData => res.json(dbThoughtData))
     .catch(err => res.json(err));
 })
 // get a single thought
 router.get('/:id', (req,res) =>{
     Thought.findOne({_id: req.params.id})
-    .select('-__v')
+    .populate({
+        path: 'user',
+        select: '-__v'
+    })
     .then(dbThoughtData => {
     if (!dbThoughtData) { res.status(404).json({message: "No Though found by this Id"})
     return;
@@ -39,10 +45,56 @@ router.post('/:id', (req, res) => {
     .catch(err => res.status(400).json(err));
 })
 //put/update a thought by id
-
+router.put('/:id', (req, res) => {
+    Thought.findOneAndUpdate(
+        { _id: params.id }, 
+        req.body,
+        {runValidators: true }
+    )
+    .then(dbThoughtData => {
+        if (!dbThoughtData) {
+            return res.status(404).json({ message: 'No thought with this ID!' });
+        }
+    res.json(dbThoughtData);
+    })
+    .catch(err => res.json(err));
+})
 // delete/destroy a thought by id
+router.delete('/:id', (req,res) => {
+    Thought.findOneAndDelete({ _id: req.params.id })
+    .then(dbThoughtData => {
+        if (!dbThoughtData) {
+            return res.status(404).json({ message: 'No thought with this ID!'})
+        }
+        res.json(dbThoughtData);
+    })
+    .catch(err => res.json(err));
+})
+    // thoughts/:thoughtId/reactions to post
+router.post('/:thoughtId/reactions', (req,res) => {
+    Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $push: { reactions: req.body } },
+        { new: true, runValidators: true }
+      )
+        .then((dbThoughtData) => {
+          if (!dbThoughtData) {
+            res.status(404).json({ message: "No Thought found with this id!" });
+            return;
+          }
+          res.json(dbThoughtData);
+        })
+        .catch((err) => res.json(err));
+})
+ // thoughts/:thoughtId/reactions to delete
+router.delete('/:thoughtId/:reactionId',(req,res) => {
+    Thought.findOneAndUpdate(
+        { _id: req.params.thoughtId },
+        { $pull: { reactions: { reactionId: req.params.reactionId } } },
+        { new: true }
+    )
+    .then(dbThoughtData => res.json(dbThoughtData))
+    .catch(err => res.json(err));
+})
 
-    // thoughts/:thoughtId/reactions
-    // Post create a reaction to a single thought array
-    // Delete to pull and remove a reaction by reaction id value
 module.exports=router;

@@ -1,12 +1,12 @@
-const { Schema, Types, model } = require("mongoose");
+const { Schema, model, Types } = require("mongoose");
 const dateFormat = require('../utils/dateFormat');
 
 
-const reactionSchema = new Schema({
+const ReactionSchema = new Schema({
   //reaction id
   reactionId: {
-    type: Schema.Types.ObjectId(),
-    default: () => new Types.ObjectId,
+    type: Schema.Types.ObjectId,
+    default: () => new Types.ObjectId(),
   },
   //reactionBody
   reactionBody: {
@@ -27,13 +27,13 @@ const reactionSchema = new Schema({
   },
 });
 
-const thoughtSchema = new Schema({
+const ThoughtSchema = new Schema({
   //thoughtText
   thoughtText: {
     type: String,
     required: true,
-    //minlength:6
-    validate: [({ length }) => 1 < length > 280, "Password should be longer."],
+    minlength: 1,
+    maxlength: 280
   },
   //createdAt
   createdAt: {
@@ -45,12 +45,21 @@ const thoughtSchema = new Schema({
   username: {
     type: String,
     required: true,
+    ref:'User'
   },
   //reactions (like replies)
-  reactions: [reactionSchema],
-});
+  reactions: [ReactionSchema],
+},
+{
+  toJSON: {
+    virtuals: true,
+    getters: true
+  },
+  id: false
+}
+);
 
 // ThoughtSchema.virtual that counts the number of reactions
 
-const Thought = model('thought', thoughtSchema);
+const Thought = model('Thought', ThoughtSchema);
 module.exports = Thought;

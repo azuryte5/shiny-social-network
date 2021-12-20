@@ -1,26 +1,43 @@
 const User = require('../../models/User');
 
 const router = require('express').Router();
-// Get/findall all users
+
 router.get('/', (req,res) =>{
     User.find({})
     .then(dbUser => res.json(dbUser))
     .catch(err => res.json(err));
 })
 
-// Get/find 1 user and populate that users thought and friend data
+//Still have to populate that users thought and friend data
+router.get('/:id', (req,res) =>{
+    User.findOne({_id: req.params.id})
+    .then(dbUserData => {
+    if (!dbUserData) { res.status(404).json({message: "No user found by this Id"})
+    return;
+    }
+    res.json(dbUserData);
+    })
+    .catch( err => res.status(400).json(err));
+})
 
-// post/create a new user
+
 router.post('/', (req, res) => {
     User.create(req.body)
     .then(dbUser => res.json(dbUser))
     .catch(err => res.status(400).json(err));
 })
 
-// Put/update a user by id
+router.put('/:id', (req, res) => {
+    User.findByIdAndUpdate({ _id:req.params.id}, req.body, {new: true, runValidators: true})
+    .then(dbUserData => {
+        if (!dbUserData) { res.status(404).json({message: "No user found by this Id"})
+        return;
+    }
+    res.json(dbUserData);
+    })
+    .catch( err => res.status(400).json(err));
+})
 
-
-// Delete to remove user
     // Bonus remove all of their thoughts as well
 router.delete('/:id', (req, res) => {
     User.findOneAndDelete({ _id:req.params.id})

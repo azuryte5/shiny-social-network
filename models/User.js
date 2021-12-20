@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-const thoughtSchema = require('./Thought');
+
 
 const userSchema = new Schema({
     //username
@@ -18,11 +18,20 @@ const userSchema = new Schema({
         match: [/.+@.+\..+/, 'Not valid']
     },
     //thoughts
-    thoughts:[thoughtSchema],
-    friends:[UserSchema]
-    
-
+    thoughts:[
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Thought'
+        }
+    ],
     //friends
+    friends:[
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ]
+    
 });
 
 // UserSchema.virtual that counts the number of friends

@@ -1,17 +1,18 @@
 const { Schema, Types, model } = require("mongoose");
-// Need to still add a date format
+const dateFormat = require('../utils/dateFormat');
+
 
 const reactionSchema = new Schema({
   //reaction id
   reactionId: {
     type: Schema.Types.ObjectId(),
-    default: () => Types.ObjectId,
+    default: () => new Types.ObjectId,
   },
   //reactionBody
   reactionBody: {
     type: String,
     required: true,
-    validate: [({ length }) => length > 280, "Password should be longer."],
+    maxlength: 280
   },
   //username
   username: {
@@ -22,7 +23,7 @@ const reactionSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    // get: createdAtVal => dateFormat(createdAtVal)
+    get: createdAtVal => dateFormat(createdAtVal)
   },
 });
 
@@ -31,13 +32,14 @@ const thoughtSchema = new Schema({
   thoughtText: {
     type: String,
     required: true,
+    //minlength:6
     validate: [({ length }) => 1 < length > 280, "Password should be longer."],
   },
   //createdAt
   createdAt: {
     type: Date,
     default: Date.now,
-    // get: createdAtVal => dateFormat(createdAtVal)
+    get: createdAtVal => dateFormat(createdAtVal)
   },
   //username
   username: {

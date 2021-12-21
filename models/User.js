@@ -40,12 +40,15 @@ id: false
 }
 );
 
-const User = model('User', UserSchema);
-
 // need virtual that counts friends.
 UserSchema.virtual('friendCount').get(function() {
     return this.friends.length;
   });
+
+  
+const User = model('User', UserSchema);
+
+
 
 module.exports = User;
 

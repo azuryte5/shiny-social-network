@@ -8,6 +8,7 @@ router.get('/', (req,res) =>{
         path: 'thoughts',
         select: '-__v'
      })
+    .select('-__v')
     .then(dbUser => res.json(dbUser))
     .catch(err => res.json(err));
 })
@@ -19,6 +20,7 @@ router.get('/:id', (req,res) =>{
         path: 'thoughts',
         select: '-__v'
      })
+    .select('-__v')
     .then(dbUserData => {
     if (!dbUserData) { res.status(404).json({message: "No user found by this Id"})
     return;

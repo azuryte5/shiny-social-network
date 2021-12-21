@@ -3,20 +3,20 @@ const router = require('express').Router();
 //get all thoughts
 router.get('/', (req,res) =>{
     Thought.find({})
-    .populate({
-        path: 'user',
-        select: '-__v'
-    })
+    // .populate({
+    //     path: 'user',
+    //     select: '-__v'
+    // })
     .then(dbThoughtData => res.json(dbThoughtData))
     .catch(err => res.json(err));
 })
 // get a single thought
 router.get('/:id', (req,res) =>{
     Thought.findOne({_id: req.params.id})
-    .populate({
-        path: 'user',
-        select: '-__v'
-    })
+    // .populate({
+    //     path: 'user',
+    //     select: '-__v'
+    // })
     .then(dbThoughtData => {
     if (!dbThoughtData) { res.status(404).json({message: "No Though found by this Id"})
     return;
@@ -47,9 +47,9 @@ router.post('/:id', (req, res) => {
 //put/update a thought by id
 router.put('/:id', (req, res) => {
     Thought.findOneAndUpdate(
-        { _id: params.id }, 
+        { _id: req.params.id }, 
         req.body,
-        {runValidators: true }
+        {new: true }
     )
     .then(dbThoughtData => {
         if (!dbThoughtData) {

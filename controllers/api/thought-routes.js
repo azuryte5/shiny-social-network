@@ -3,10 +3,11 @@ const router = require('express').Router();
 //get all thoughts
 router.get('/', (req,res) =>{
     Thought.find({})
-    // .populate({
-    //     path: 'user',
-    //     select: '-__v'
-    // })
+    .populate({
+        path: 'reactions',
+        select: '-__v'
+    })
+    .select('-__v')
     .then(dbThoughtData => res.json(dbThoughtData))
     .catch(err => res.json(err));
 })
@@ -14,7 +15,7 @@ router.get('/', (req,res) =>{
 router.get('/:id', (req,res) =>{
     Thought.findOne({_id: req.params.id})
     // .populate({
-    //     path: 'user',
+    //     path: 'reactions',
     //     select: '-__v'
     // })
     .then(dbThoughtData => {
@@ -30,7 +31,7 @@ router.post('/:id', (req, res) => {
     Thought.create(req.body)
     .then(({_id}) => {
     return User.findOneAndUpdate(
-        { _id: params.UserId },
+        { _id: body.userId },
         { $push: {thoughts: _id} },
         { new: true }
     );
@@ -64,12 +65,24 @@ router.delete('/:id', (req,res) => {
     Thought.findOneAndDelete({ _id: req.params.id })
     .then(dbThoughtData => {
         if (!dbThoughtData) {
-            return res.status(404).json({ message: 'No thought with this ID!'})
+          res.status(404).json({ message: 'No thoughts found with that id!' });
+          return;
         }
-        res.json(dbThoughtData);
+        return User.findOneAndUpdate(
+          { _id: parmas.userId },
+          { $pull: { thoughts: params.Id } },
+          { new: true }
+        )
+      })
+      .then(dbUserData => {
+        if (!dbUserData) {
+          res.status(404).json({ message: 'No User found with this id!' });
+          return;
+        }
+        res.json(dbUserData)
     })
-    .catch(err => res.json(err));
-})
+    .catch(err => res.json(err))
+});
     // thoughts/:thoughtId/reactions to post
 router.post('/:thoughtId/reactions', (req,res) => {
     Thought.findOneAndUpdate(

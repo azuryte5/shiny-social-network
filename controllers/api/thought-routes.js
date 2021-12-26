@@ -69,7 +69,7 @@ router.delete('/:id', (req,res) => {
           return;
         }
         return User.findOneAndUpdate(
-          { _id: req.params.id },
+          { _id: req.body.id },
           { $pull: { thoughts: req.params.id } },
           { new: true }
         )

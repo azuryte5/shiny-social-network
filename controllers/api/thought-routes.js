@@ -14,10 +14,10 @@ router.get('/', (req,res) =>{
 // get a single thought
 router.get('/:id', (req,res) =>{
     Thought.findOne({_id: req.params.id})
-    // .populate({
-    //     path: 'reactions',
-    //     select: '-__v'
-    // })
+    .populate({
+        path: 'reactions',
+        select: '-__v'
+    })
     .then(dbThoughtData => {
     if (!dbThoughtData) { res.status(404).json({message: "No Though found by this Id"})
     return;
@@ -31,7 +31,7 @@ router.post('/:id', (req, res) => {
     Thought.create(req.body)
     .then(({_id}) => {
     return User.findOneAndUpdate(
-        { _id: body.userId },
+        { _id: req.params.id },
         { $push: {thoughts: _id} },
         { new: true }
     );
@@ -69,8 +69,8 @@ router.delete('/:id', (req,res) => {
           return;
         }
         return User.findOneAndUpdate(
-          { _id: parmas.userId },
-          { $pull: { thoughts: params.Id } },
+          { _id: req.params.id },
+          { $pull: { thoughts: req.params.id } },
           { new: true }
         )
       })

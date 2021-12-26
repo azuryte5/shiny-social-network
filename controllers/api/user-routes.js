@@ -4,10 +4,15 @@ const router = require("express").Router();
 
 router.get("/", (req, res) => {
   User.find({})
+    .populate({
+      path: 'thoughts',
+      select: '-__v',
+    })
+    //Had this working but was too much info
     // .populate({
-    //   path: "thoughts",
-    //   select: "-__v",
-    // })
+    //     path: 'friends',
+    //     select: '-__v',
+    //   })
     .select('-__v')
     .then((dbUser) => res.json(dbUser))
     .catch((err) => res.json(err));
@@ -64,19 +69,21 @@ router.delete("/:id", (req, res) => {
     })
     .catch((err) => res.status(400).json(err));
 });
-//     Thought.deleteMany({ userId: req.params.id })
-//       .then(() => {
-//         User.findOneAndDelete({ userId: params.id })
+
+// Started working on bonus, might finish another time    
+//       User.findOneAndDelete({ _id: req.params.id })
 //           .then(dbUserData => {
 //             if (!dbUserData) {
 //               res.status(404).json({ message: 'No User found with this id!' });
 //               return;
 //             }
 //             res.json(dbUserData);
-//           });
+//           })
+//       .then(Thought.deleteMany({_id:req.params.id}))
 //       })
+//       .then(dbUser => res.json(dbUser))
 //       .catch(err => res.json(err));
-//   },
+//   })
 
 // userid/friends/friendID
 // Post/create a new friend to a user friend list
